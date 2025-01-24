@@ -1,0 +1,72 @@
+from TDStoreTools import StorageManager
+import TDFunctions as TDF
+import uuid
+import time
+
+p = parent()
+pp = p.par
+feedTemplate = op('base_template')
+names = op('table_feed_default_names')
+
+class Feeds:
+
+	def __init__(self, ownerComp):
+		# The component to which this extension is attached
+		self.ownerComp = ownerComp
+		
+	def CreateFeed(self):
+		# generate id for screen
+		feedID = str(uuid.uuid1())
+		feedID = feedID.replace('-','_')
+		numFeeds = parent().GetInfoTable().numRows-1
+		nameIncrement = pp.Nameincrement
+		numNames = names.numRows
+		createdTime = int(time.time())
+
+		newName = names[nameIncrement,0]
+		
+		if nameIncrement < numNames-1:
+			pp.Nameincrement = nameIncrement+1
+		else:
+			pp.Nameincrement = 0
+			
+		newColour = op('noise_comp_colours').sample(x=numFeeds,y=0)
+
+		newFeed = p.copy(feedTemplate)
+		newFeed.name = 'feed_'+feedID
+		
+		newFeed.par.Name = newName
+		newFeed.par.Id = feedID
+		newFeed.par.Feedcolorr = newColour[0]
+		newFeed.par.Feedcolorg = newColour[1]
+		newFeed.par.Feedcolorb = newColour[2]
+		newFeed.par.Created = createdTime
+
+		p.SetFeedPosition(newFeed,200)
+		op.UTILS.SetStatus("info","Created new feed")
+		return
+		
+	def SetFeedPosition(self, opToMove, yPos):
+		# set pos based on how many screens we have
+		feedOps = p.findChildren(name="feed_*", type=COMP)
+		xPos = len(feedOps)*yPos
+		opToMove.nodeX = xPos
+		opToMove.nodeY = yPos
+		return
+		
+	def DeleteFeed(self, feedID):
+		op('feed_'+feedID).destroy()
+		op.UTILS.SetStatus("info","Deleted Feed: " + feedID)
+		return
+		
+	def DeleteAllFeeds(self):
+		opsToDelete = p.findChildren(name="feed_*", type=COMP)
+		for delOp in opsToDelete:
+			delOp.destroy()
+		return
+		
+	def GetInfoTable(self):
+		return op('null_get_feeds')
+		
+	def GetNumberOfFeeds(self):
+		return p.GetInfoTable().numRows-1
