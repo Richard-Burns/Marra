@@ -10,5 +10,11 @@ class Main:
 		
 	def Save(self):
 		if ui.performMode == False:
-			project.save(saveExternalToxs=True)
+			#project.save(saveExternalToxs=True)
+			
+			allCOMPS = parent().findChildren(type=COMP, parName='externaltox', onlyNonDefaults=True)
+			
+			for c in allCOMPS:
+				if c.dirty:
+					c.saveExternalTox(recurse=False)
 		return
