@@ -2,6 +2,8 @@ from TDStoreTools import StorageManager
 import TDFunctions as TDF
 import uuid
 import time
+import os
+from pathlib import Path
 
 p = parent()
 pp = p.par
@@ -12,8 +14,9 @@ class Compositions:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
+
 		
-	def CreateComposition(self):
+	def Create(self):
 		# generate id for scene
 		compID = str(uuid.uuid1())
 		compID = compID.replace('-','_')
@@ -42,7 +45,7 @@ class Compositions:
 		newComp.par.Colourb = newColour[2]
 		newComp.par.Created = createdTime
 
-		p.SetCompPosition(newComp,200)
+		op.UTILS.LayoutCOMPs(p, "composition", 200)
 		op.UTILS.SetStatus("info","Created new composition called " + newName)
 		
 		# update ui elements
@@ -50,16 +53,9 @@ class Compositions:
 		op.OUTPUTVIEWERS.SetLatestToSelected()
 		return
 		
-	def SetCompPosition(self, opToMove, yPos):
-		# set pos based on how many clips we have
-		compOps = p.findChildren(name="composition_*", type=COMP)
-		xPos = len(compOps)*yPos
-		opToMove.nodeX = xPos
-		opToMove.nodeY = yPos
-		return
-		
-	def DeleteComposition(self, compid):
+	def Delete(self, compid):
 		op('composition_'+compid).destroy()
+		op.UTILS.RemoveDependentCOMPFromParameters(compid, op.LAYERS, "Compositionid")
 		op.UTILS.SetStatus("info","Deleted composition: " + compid)
 		
 		#update UI
@@ -68,14 +64,7 @@ class Compositions:
 		except:
 			pass
 		
-		return
-		
-	def DeleteAllCompositions(self):
-		opsToDelete = p.findChildren(name="composition_*", type=COMP)
-		for delOp in opsToDelete:
-			delOp.destroy()
-			
-		op.PARAMETERS.Deselect()
+		op.UTILS.LayoutCOMPs(p, "composition", 200)
 		return
 		
 	def GetInfoTable(self):

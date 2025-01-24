@@ -14,7 +14,7 @@ class Feeds:
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
 		
-	def CreateFeed(self):
+	def Create(self):
 		# generate id for screen
 		feedID = str(uuid.uuid1())
 		feedID = feedID.replace('-','_')
@@ -42,27 +42,14 @@ class Feeds:
 		newFeed.par.Feedcolorb = newColour[2]
 		newFeed.par.Created = createdTime
 
-		p.SetFeedPosition(newFeed,200)
+		op.UTILS.LayoutCOMPs(p, "feed", 200)
 		op.UTILS.SetStatus("info","Created new feed")
 		return
 		
-	def SetFeedPosition(self, opToMove, yPos):
-		# set pos based on how many screens we have
-		feedOps = p.findChildren(name="feed_*", type=COMP)
-		xPos = len(feedOps)*yPos
-		opToMove.nodeX = xPos
-		opToMove.nodeY = yPos
-		return
-		
-	def DeleteFeed(self, feedID):
+	def Delete(self, feedID):
 		op('feed_'+feedID).destroy()
 		op.UTILS.SetStatus("info","Deleted Feed: " + feedID)
-		return
-		
-	def DeleteAllFeeds(self):
-		opsToDelete = p.findChildren(name="feed_*", type=COMP)
-		for delOp in opsToDelete:
-			delOp.destroy()
+		op.UTILS.LayoutCOMPs(p, "feed", 200)
 		return
 		
 	def GetInfoTable(self):

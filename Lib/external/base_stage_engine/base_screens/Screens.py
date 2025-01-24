@@ -13,7 +13,7 @@ class Screens:
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
 		
-	def CreateScreen(self):
+	def Create(self):
 		# generate id for screen
 		screenID = str(uuid.uuid1())
 		screenID = screenID.replace('-','_')
@@ -25,27 +25,14 @@ class Screens:
 		newScreen.par.Id = screenID
 		newScreen.par.Created = createdTime
 
-		p.SetScreenPosition(newScreen,200)
+		op.UTILS.LayoutCOMPs(p, "screen", 200)
 		op.UTILS.SetStatus("info","Created new screen")
 		return
 		
-	def SetScreenPosition(self, opToMove, yPos):
-		# set pos based on how many screens we have
-		screenOps = p.findChildren(name="screen_*", type=COMP)
-		xPos = len(screenOps)*yPos
-		opToMove.nodeX = xPos
-		opToMove.nodeY = yPos
-		return
-		
-	def DeleteScreen(self, screenid):
+	def Delete(self, screenid):
 		op('screen_'+screenid).destroy()
 		op.UTILS.SetStatus("info","Deleted Screen: " + screenid)
-		return
-		
-	def DeleteAllScreens(self):
-		opsToDelete = p.findChildren(name="screen_*", type=COMP)
-		for delOp in opsToDelete:
-			delOp.destroy()
+		op.UTILS.LayoutCOMPs(p, "screen", 200)
 		return
 		
 	def GetInfoTable(self):

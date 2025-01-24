@@ -74,23 +74,15 @@ class Layers:
 			
 		p.CheckLayerOrder()
 		return
-		
-	def SetLayerPosition(self, opToMove, yPos):
-		# set pos based on how many clips we have
-		layerOps = p.findChildren(name="layer_*", type=COMP)
-		xPos = len(layerOps)*yPos
-		opToMove.nodeX = xPos
-		opToMove.nodeY = yPos
-		return
 
-	def CreateLayer(self):
+	def Create(self):
 		
 		# we need to check if we have any compositions to add to first
 		numComps = op.COMPOSITIONS.GetNumberOfCompositions()
 		
 		# if not lets abort creating the layer and show the user a modal
 		if numComps == 0:
-			op.MODALS.ShowModal('couldnt_create_layer')
+			op.MODALS.ShowByID(3)
 			op.UTILS.SetStatus('error', "couldn't create new layer. No Compositions available.")
 			return
 			
@@ -105,7 +97,7 @@ class Layers:
 		else:
 			compID = op.COMPOSITIONS.GetFirstCompositionID()
 			if compID == "none":
-				op.MODALS.ShowModal('couldnt_create_layer')
+				op.MODALS.ShowByID(3)
 				op.UTILS.SetStatus('error', "couldn't create new layer. Cant access selected Composition ID")
 				return
 		
@@ -135,22 +127,15 @@ class Layers:
 		newLayer.par.Order = numLayers
 		newLayer.par.Compositionid = compID
 		p.CheckLayerOrder()
-		p.SetLayerPosition(newLayer,200)
+		op.UTILS.LayoutCOMPs(p, "layer", 200)
 		op.UTILS.SetStatus('info', 'created new layer: '+ layerID)
 		
 		return
 		
-	def DeleteLayer(self, layerID):
+	def Delete(self, layerID):
 		op('layer_'+layerID).destroy()
 		op.UTILS.SetStatus('info', 'deleted layer: '+ layerID)
-		return
-		
-	def DeleteAllLayers(self):
-		opsToDelete = p.findChildren(name="layer_*", type=COMP)
-		for delOp in opsToDelete:
-			delOp.destroy()
-		
-		op.UTILS.SetStatus('info', 'deleted all layers in the project')
+		op.UTILS.LayoutCOMPs(p, "layer", 200)
 		return
 		
 	def SetLayerClip(self, layerID, column, clipID):

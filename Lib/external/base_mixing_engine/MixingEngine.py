@@ -19,10 +19,10 @@ class MixingEngine:
 		
 			if droppedOP.parent(2).name == "container_toxs":
 				toxPath = droppedOP.par.Filename.eval()
-				clipId = op.CLIPS.CreateClip("tox", layerId, filePath=toxPath)
+				clipId = op.CLIPS.Create("tox", layerId, filePath=toxPath)
 				op.LAYERS.SetLayerClip(layerId, column, clipId)
 		else:
-			clipId = op.CLIPS.CreateClip("tox", layerId)
+			clipId = op.CLIPS.Create("tox", layerId)
 			op.LAYERS.SetLayerClip(layerId, column, clipId)
 			
 		return
