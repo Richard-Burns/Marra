@@ -1,6 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
 import os
 
 p = parent()
@@ -20,8 +19,7 @@ class Clips:
 	def Create(self, type,layerID, filePath=None):
 		
 		# generate id for clip
-		clipID = str(uuid.uuid1())
-		clipID = clipID.replace('-','_')
+		clipID = op.UTILS.CreateID()
 		toxName = "New Clip"
 		
 		# figure out which tox to load based on the type

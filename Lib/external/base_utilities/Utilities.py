@@ -1,6 +1,8 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
 import datetime
+import uuid
+import time
 
 p = parent()
 pp = p.par
@@ -16,6 +18,14 @@ class Utilities:
 		ct = datetime.datetime.now()
 		op('fifo1').appendRow([ct, type, status])
 		return
+	
+	def CreateID(self):
+		newID = str(uuid.uuid1())
+		newID = newID.replace('-','_')
+		return newID
+	
+	def Timestamp(self):
+		return int(time.time())
 		
 	def LayoutCOMPs(self, parentCOMP, name, nodeY):
 		comps = parentCOMP.findChildren(type=COMP, name=name+"_*")
@@ -71,3 +81,6 @@ class Utilities:
 			if c.par[parameterName] == currentCOMPID:
 				checkCOMPs.Delete(c.par.Id)
 		return
+		
+	def Timecode(self):
+		return op('timecode1').timecode

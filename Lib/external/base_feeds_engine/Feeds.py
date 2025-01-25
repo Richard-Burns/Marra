@@ -1,7 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
-import time
 
 p = parent()
 pp = p.par
@@ -16,12 +14,11 @@ class Feeds:
 		
 	def Create(self):
 		# generate id for screen
-		feedID = str(uuid.uuid1())
-		feedID = feedID.replace('-','_')
+		feedID = op.UTILS.CreateID()
 		numFeeds = parent().GetInfoTable().numRows-1
 		nameIncrement = pp.Nameincrement
 		numNames = names.numRows
-		createdTime = int(time.time())
+		createdTime = op.UTILS.Timestamp()
 
 		newName = names[nameIncrement,0]
 		

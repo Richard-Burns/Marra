@@ -1,7 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
-import time
 
 p = parent()
 pp = p.par
@@ -15,10 +13,9 @@ class Props:
 		
 	def Create(self):
 		# generate id for screen
-		propID = str(uuid.uuid1())
-		propID = propID.replace('-','_')
+		propID = op.UTILS.CreateID()
 		numProps = parent().GetInfoTable().numRows-1
-		createdTime = int(time.time())
+		createdTime = op.UTILS.Timestamp()
 
 		newProp = p.copy(propTemplate)
 		newProp.name = "prop_"+propID

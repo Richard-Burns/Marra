@@ -11,9 +11,9 @@ def onPulse(par):
 
 def onCook(scriptOp):
 	# change this path to decide which ops to get params for
-	parentPath = op.SCREENS
-	templatePath = parentPath.op('geo_template')
-	cloneOPNames = "screen_*"
+	parentPath = op.COMMS
+	templatePath = parentPath.op('base_template')
+	cloneOPNames = "mappingset_*"
 	
 	scriptOp.clear()
 	

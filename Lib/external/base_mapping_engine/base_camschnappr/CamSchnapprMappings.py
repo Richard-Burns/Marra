@@ -1,7 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
-import time
 
 p = parent()
 pp = p.par
@@ -15,10 +13,9 @@ class CamSchnapprMappings:
 		
 	def Create(self):
 		# generate id for screen
-		mappingID = str(uuid.uuid1())
-		mappingID = mappingID.replace('-','_')
+		mappingID = op.UTILS.CreateID()
 		numMappings = parent().GetInfoTable().numRows-1
-		createdTime = int(time.time())
+		createdTime = op.UTILS.Timestamp()
 
 		newMapping = p.copy(mappingTemplate)
 		newMapping.name = "mapping_"+mappingID

@@ -1,7 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
-import time
 
 p = parent()
 pp = p.par
@@ -15,10 +13,9 @@ class Screens:
 		
 	def Create(self):
 		# generate id for screen
-		screenID = str(uuid.uuid1())
-		screenID = screenID.replace('-','_')
+		screenID = op.UTILS.CreateID()
 		numScreens = parent().GetInfoTable().numRows-1
-		createdTime = int(time.time())
+		createdTime = op.UTILS.Timestamp()
 
 		newScreen = p.copy(screenTemplate)
 		newScreen.name = "screen_"+screenID

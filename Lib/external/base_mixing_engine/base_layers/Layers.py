@@ -1,6 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
 
 p = parent()
 pp = parent().par
@@ -102,8 +101,7 @@ class Layers:
 				return
 		
 		# generate id for layer
-		layerID = str(uuid.uuid1())
-		layerID = layerID.replace('-','_')
+		layerID = op.UTILS.CreateID()
 		
 		# generate a name for the layer
 		

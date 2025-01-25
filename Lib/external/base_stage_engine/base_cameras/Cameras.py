@@ -1,7 +1,5 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
-import uuid
-import time
 
 p = parent()
 pp = p.par
@@ -15,10 +13,9 @@ class Cameras:
 		
 	def Create(self):
 		# generate id for screen
-		cameraID = str(uuid.uuid1())
-		cameraID = cameraID.replace('-','_')
+		cameraID = op.UTILS.CreateID()
 		numCams = parent().GetInfoTable().numRows-1
-		createdTime = int(time.time())
+		createdTime = op.UTILS.Timestamp()
 
 		newCam = p.copy(camTemplate)
 		newCam.name = "camera_"+cameraID
