@@ -94,7 +94,10 @@ class Layers:
 			compID = selectionObj['ID']
 			
 		else:
-			compID = op.COMPOSITIONS.GetFirstCompositionID()
+			compID = op.OUTPUTVIEWERS.par.Selectedid
+			if compID == "":
+				compID = op.COMPOSITIONS.GetFirstCompositionID()
+			
 			if compID == "none":
 				op.MODALS.ShowByID(3)
 				op.UTILS.SetStatus('error', "couldn't create new layer. Cant access selected Composition ID")
@@ -131,7 +134,15 @@ class Layers:
 		return
 		
 	def Delete(self, layerID):
-		op('layer_'+layerID).destroy()
+		
+		layer = op('layer_'+layerID)
+		
+		clips = layer.GetClips()
+		
+		for c in clips:
+			op.CLIPS.Delete(c)
+		
+		layer.destroy()
 		op.UTILS.SetStatus('info', 'deleted layer: '+ layerID)
 		op.UTILS.LayoutCOMPs(p, "layer", 200)
 		return
