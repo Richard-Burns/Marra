@@ -38,6 +38,8 @@ class Feeds:
 		newFeed.par.Feedcolorg = newColour[1]
 		newFeed.par.Feedcolorb = newColour[2]
 		newFeed.par.Created = createdTime
+		newFeed.par.display = 1
+		newFeed.par.enable = 1
 
 		op.UTILS.LayoutCOMPs(p, "feed", 200)
 		op.UTILS.SetStatus("info","Created new feed")

@@ -30,10 +30,14 @@ class Comms:
 		return op('null_get_mappingsets')
 	
 	def Delete(self, mappingsetid):
-		op('mappingset_'+mappingsetid).destroy()
-		op.UTILS.SetStatus("info","Deleted Mapping Set: " + mappingsetid)
-		op.UTILS.LayoutCOMPs(p, "mappingset", 200)
+		if not op('mappingset_'+mappingsetid).par.Locked:
+			op('mappingset_'+mappingsetid).destroy()
+			op.UTILS.SetStatus("info","Deleted Mapping Set: " + mappingsetid)
+			op.UTILS.LayoutCOMPs(p, "mappingset", 200)
 		return
 		
 	def GetMIDIInput(self):
 		return op('base_midi_input/out1')
+		
+	def GetOSCInput(self):
+		return op('base_osc_input/out1')
