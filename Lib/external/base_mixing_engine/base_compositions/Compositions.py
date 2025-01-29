@@ -44,6 +44,7 @@ class Compositions:
 		newComp.par.Colourg = newColour[1]
 		newComp.par.Colourb = newColour[2]
 		newComp.par.Created = createdTime
+		newComp.par.externaltox = ""
 
 		op.UTILS.LayoutCOMPs(p, "composition", 200)
 		op.UTILS.SetStatus("info","Created new composition called " + newName)
