@@ -5,6 +5,7 @@ p = parent()
 pp = p.par
 feedTemplate = op('base_template')
 names = op('table_feed_default_names')
+toxDir = "feeds/"
 
 class Feeds:
 
@@ -40,15 +41,36 @@ class Feeds:
 		newFeed.par.Created = createdTime
 		newFeed.par.display = 1
 		newFeed.par.enable = 1
+		newFeed.tags.add('projectObject')
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newFeed.name + ".tox"
+		newFeed.par.externaltox = externalPath
 
 		op.UTILS.LayoutCOMPs(p, "feed", 200)
 		op.UTILS.SetStatus("info","Created new feed")
+		return
+		
+	def LoadFromProject(self, projectName):
+		p.DeleteAll()
+		toxFolder = op.PROJECT.ProjectDir() + toxDir
+		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		
+		for nTox in toxes:
+			try:
+				p.loadTox(toxFolder + nTox)
+			except:
+				pass
+				
+		op.UTILS.LayoutCOMPs(p, "feed", 200)
 		return
 		
 	def Delete(self, feedID):
 		op('feed_'+feedID).destroy()
 		op.UTILS.SetStatus("info","Deleted Feed: " + feedID)
 		op.UTILS.LayoutCOMPs(p, "feed", 200)
+		return
+		
+	def DeleteAll(self):
+		op.UTILS.DeleteAllCOMPs(p, "feed")
 		return
 		
 	def GetInfoTable(self):

@@ -12,7 +12,7 @@ class Main:
 		if ui.performMode == False:
 			#project.save(saveExternalToxs=True)
 			
-			allCOMPS = parent().findChildren(type=COMP, parName='externaltox', onlyNonDefaults=True)
+			allCOMPS = parent().findChildren(type=COMP, parName='externaltox', onlyNonDefaults=False)
 			
 			for c in allCOMPS:
 				if c.dirty:

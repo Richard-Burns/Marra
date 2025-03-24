@@ -3,6 +3,9 @@ import TDFunctions as TDF
 import datetime
 import uuid
 import time
+from pathlib import Path
+from os import listdir
+from os.path import isfile, join
 
 p = parent()
 pp = p.par
@@ -38,32 +41,6 @@ class Utilities:
 			nodeX = nodeX+200
 		return
 	
-
-	def SaveCOMPsToProject(self, parentCOMP, name, projectName="Default"):
-
-		comps = p.findChildren(name=name+'_*', type=COMP)
-
-		for c in comps:
-			c.save("Projects/"+projectName+"/"+name+"s/"+c.name, createFolders=False)
-		return
-	
-	def LoadCOMPsToProject(self, parentCOMP, name, projectName="Default"):
-		# WARNING! calling this will wipe out all comps currently in the network
-
-		op.UTILS.DeleteAllCOMPs(parentCOMP,name)
-		
-		dir_path = "Projects/"+projectName+"/"+name+"s/"
-
-		compFiles = [
-    		f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))
-		]
-
-		for c in compFiles:
-			compPath = dir_path + c
-			parentCOMP.loadTox(compPath, unwired=True)
-
-		return
-	
 	def DeleteAllCOMPs(self, parentCOMP, name):
 		opsToDelete = parentCOMP.findChildren(name=name+"_*", type=COMP)
 		for delOp in opsToDelete:
@@ -71,6 +48,10 @@ class Utilities:
 			
 		op.PARAMETERS.Deselect()
 		return
+		
+	def GetFilesFromFolder(self, folderPath):
+		allFiles = [f for f in listdir(folderPath) if isfile(join(folderPath, f))]
+		return allFiles
 	
 	def RemoveDependentCOMPFromParameters(self, currentCOMPID, COMPToCheck, parameterName):
 		# this function finds comps that are dependent on others and deletes them

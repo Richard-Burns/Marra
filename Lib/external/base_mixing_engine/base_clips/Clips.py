@@ -7,6 +7,7 @@ pp = parent().par
 engineEnabled = pp.Touchenginemode
 toxFolder = pp.Toxfolder
 clipTemplate = op('base_template')
+toxDir = "mixing/clips/"
 
 class Clips:
 	"""
@@ -41,6 +42,9 @@ class Clips:
 		newClip.par.Name = toxName
 		newClip.par.Id = clipID
 		newClip.par.Compositionid = op.LAYERS.op('layer_'+layerID).par.Compositionid
+		newClip.tags.add('projectObject')
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newClip.name + ".tox"
+		newClip.par.externaltox = externalPath
 			
 		# now we create our external tox inside our new clip
 		# check if touchengine is enabled
@@ -63,6 +67,20 @@ class Clips:
 		
 		return clipID
 		
+	def LoadFromProject(self, projectName):
+		p.DeleteAll()
+		toxFolder = op.PROJECT.ProjectDir() + toxDir
+		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		
+		for nTox in toxes:
+			try:
+				p.loadTox(toxFolder + nTox)
+			except:
+				pass
+				
+		op.UTILS.LayoutCOMPs(p, "clip", 200)
+		return
+		
 	def Delete(self, clipid):
 		try:
 			op('clip_'+clipid).destroy()
@@ -71,6 +89,10 @@ class Clips:
 			op.UTILS.SetStatus('warn', "couldn't delete "+ clipid+ " - it probably doesn't exist")
 		op.LAYERS.CheckAllLayersForMissingClips()
 		op.UTILS.LayoutCOMPs(p, "clip", 200)
+		return
+		
+	def DeleteAll(self):
+		op.UTILS.DeleteAllCOMPs(p, "clip")
 		return
 		
 	def OpenClipNetwork(self, clipID):

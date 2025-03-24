@@ -8,6 +8,7 @@ from pathlib import Path
 p = parent()
 pp = p.par
 compTemplate = op('base_template')
+toxDir = "mixing/compositions/"
 
 class Compositions:
 
@@ -44,7 +45,9 @@ class Compositions:
 		newComp.par.Colourg = newColour[1]
 		newComp.par.Colourb = newColour[2]
 		newComp.par.Created = createdTime
-		newComp.par.externaltox = ""
+		newComp.tags.add('projectObject')
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newComp.name + ".tox"
+		newComp.par.externaltox = externalPath
 
 		op.UTILS.LayoutCOMPs(p, "composition", 200)
 		op.UTILS.SetStatus("info","Created new composition called " + newName)
@@ -52,6 +55,20 @@ class Compositions:
 		# update ui elements
 		op.PARAMETERS.SetParameterObject("composition", compID)
 		op.OUTPUTVIEWERS.SetLatestToSelected()
+		return
+		
+	def LoadFromProject(self, projectName):
+		p.DeleteAll()
+		toxFolder = op.PROJECT.ProjectDir() + toxDir
+		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		
+		for nTox in toxes:
+			try:
+				p.loadTox(toxFolder + nTox)
+			except:
+				pass
+				
+		op.UTILS.LayoutCOMPs(p, "composition", 200)
 		return
 		
 	def Delete(self, compid):
@@ -66,6 +83,10 @@ class Compositions:
 			pass
 		
 		op.UTILS.LayoutCOMPs(p, "composition", 200)
+		return
+		
+	def DeleteAll(self):
+		op.UTILS.DeleteAllCOMPs(p, "composition")
 		return
 		
 	def GetInfoTable(self):

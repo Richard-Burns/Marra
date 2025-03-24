@@ -38,6 +38,21 @@ class MixingEngine:
 			activeMatrix[row,c] = 0
 		return
 		
+	def SwapActiveMatrixVal(self, val1, val2): # provide a [row, col] array for val1 and val2
+	
+		print('val1: ' + str(val1[0]) + " " + str(val1[1]))
+		print('val2: ' + str(val2[0]) + " " + str(val2[1]))
+		aVal1 = 0
+		aVal2 = 0
+		
+		aVal1 = activeMatrix[val1[0], val1[1]].val
+		aVal2 = activeMatrix[val2[0], val2[1]].val
+			
+		activeMatrix[val1[0],val1[1]] = aVal2
+		activeMatrix[val2[0],val2[1]] = aVal1
+		
+		return
+		
 	def SetActiveMatrixForLayer(self, layerID, column):
 		layersList = op.LAYERS.GetInfoTable()
 		
@@ -72,11 +87,4 @@ class MixingEngine:
 		for r in range(0, colNames.numCols):
 			if colNames[0,r] == "":
 				colNames[0,r] = "column " + str(r)
-		return
-
-
-	def ClearProject(self):
-		op.COMPOSITIONS.DeleteAllCompositions()
-		op.LAYERS.DeleteAllLayers()
-		op.CLIPS.DeleteAllClips()
 		return

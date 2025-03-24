@@ -4,6 +4,7 @@ import TDFunctions as TDF
 p = parent()
 pp = p.par
 propTemplate = op('geo_template')
+toxDir = "stage/props/"
 
 class Props:
 
@@ -21,15 +22,36 @@ class Props:
 		newProp.name = "prop_"+propID
 		newProp.par.Id = propID
 		newProp.par.Created = createdTime
+		newProp.tags.add('projectObject')
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newProp.name + ".tox"
+		newProp.par.externaltox = externalPath
 
 		op.UTILS.LayoutCOMPs(p, "prop", 200)
 		op.UTILS.SetStatus("info","Created new prop")
+		return
+		
+	def LoadFromProject(self, projectName):
+		p.DeleteAll()
+		toxFolder = op.PROJECT.ProjectDir() + toxDir
+		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		
+		for nTox in toxes:
+			try:
+				p.loadTox(toxFolder + nTox)
+			except:
+				pass
+				
+		op.UTILS.LayoutCOMPs(p, "prop", 200)
 		return
 		
 	def Delete(self, propid):
 		op('prop_'+propid).destroy()
 		op.UTILS.SetStatus("info","Deleted Prop: " + propid)
 		op.UTILS.LayoutCOMPs(p, "prop", 200)
+		return
+		
+	def DeleteAll(self):
+		op.UTILS.DeleteAllCOMPs(p, "prop")
 		return
 		
 	def GetInfoTable(self):

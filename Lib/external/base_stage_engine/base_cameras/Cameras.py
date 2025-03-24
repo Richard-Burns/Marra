@@ -4,6 +4,7 @@ import TDFunctions as TDF
 p = parent()
 pp = p.par
 camTemplate = op('geo_template')
+toxDir = "stage/cameras/"
 
 class Cameras:
 
@@ -22,9 +23,25 @@ class Cameras:
 		newCam.par.Id = cameraID
 		newCam.par.Created = createdTime
 		newCam.par.render = True
+		newCam.tags.add('projectObject')
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newCam.name + ".tox"
+		newCam.par.externaltox = externalPath
 
-		p.SetCameraPosition(newCam,200)
 		op.UTILS.SetStatus("info","Created new camera")
+		op.UTILS.LayoutCOMPs(p, "camera", 200)
+		return
+		
+	def LoadFromProject(self, projectName):
+		p.DeleteAll()
+		toxFolder = op.PROJECT.ProjectDir() + toxDir
+		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		
+		for nTox in toxes:
+			try:
+				p.loadTox(toxFolder + nTox)
+			except:
+				pass
+				
 		op.UTILS.LayoutCOMPs(p, "camera", 200)
 		return
 		
@@ -32,6 +49,10 @@ class Cameras:
 		op('camera_'+camID).destroy()
 		op.UTILS.SetStatus("info","Deleted Camera: " + camID)
 		op.UTILS.LayoutCOMPs(p, "camera", 200)
+		return
+		
+	def DeleteAll(self):
+		op.UTILS.DeleteAllCOMPs(p, "camera")
 		return
 		
 	def GetInfoTable(self):

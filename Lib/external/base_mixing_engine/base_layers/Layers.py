@@ -6,6 +6,7 @@ pp = parent().par
 layerTemplate = op('base_template')
 layersList = op('null_get_params')
 numLayers = layersList.numRows-1
+toxDir = "mixing/layers/"
 
 class Layers:
 
@@ -26,6 +27,9 @@ class Layers:
 		
 	def GetInfoTable(self):
 		return op('null_get_params')
+		
+	def GetIDMatrix(self):
+		return op('null_id_matrix')
 		
 	def CheckLayerOrder(self):
 		
@@ -127,10 +131,29 @@ class Layers:
 		newLayer.par.Id = layerID
 		newLayer.par.Order = numLayers
 		newLayer.par.Compositionid = compID
+		newLayer.tags.add('projectObject')
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newLayer.name + ".tox"
+		newLayer.par.externaltox = externalPath
+		
+		
 		p.CheckLayerOrder()
 		op.UTILS.LayoutCOMPs(p, "layer", 200)
 		op.UTILS.SetStatus('info', 'created new layer: '+ layerID)
 		
+		return
+		
+	def LoadFromProject(self, projectName):
+		p.DeleteAll()
+		toxFolder = op.PROJECT.ProjectDir() + toxDir
+		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		
+		for nTox in toxes:
+			try:
+				p.loadTox(toxFolder + nTox)
+			except:
+				pass
+				
+		op.UTILS.LayoutCOMPs(p, "layer", 200)
 		return
 		
 	def Delete(self, layerID):
@@ -146,6 +169,10 @@ class Layers:
 		op.UTILS.SetStatus('info', 'deleted layer: '+ layerID)
 		op.UTILS.LayoutCOMPs(p, "layer", 200)
 		return
+	
+	def DeleteAll(self):
+		op.UTILS.DeleteAllCOMPs(p, "layer")
+		return
 		
 	def SetLayerClip(self, layerID, column, clipID):
 		op('layer_'+layerID).LoadClip(column, clipID)
@@ -154,17 +181,16 @@ class Layers:
 		return
 		
 	def SwapClip(self, layerId1, columnId1, layerId2, columnId2):
-		print(layerId1)
-		print(columnId1)
-		print(columnId2)
-		print(layerId2)
-		clip1ID = op.LAYERS.GetClipIDByLayerIDAndColumnIndex(layerId1, columnId1)
-		clip2ID = op.LAYERS.GetClipIDByLayerIDAndColumnIndex(layerId2, columnId2)
+		columnIdLookup1 = columnId1-1
+		columnIdLookup2 = columnId2-1
 		
-		print(clip1ID, clip2ID)
+		clip1ID = str(op('layer_'+layerId1).FindClipIDByColumn(columnIdLookup1))
+		clip2ID = str(op('layer_'+layerId2).FindClipIDByColumn(columnIdLookup2))
 		
-		op('layer_'+layerId1).ReplaceClip(clip1ID,clip2ID)
-		op('layer_'+layerId2).ReplaceClip(clip2ID,clip1ID)
+		op('layer_'+layerId1).LoadClip(columnIdLookup1,clip2ID)
+		op('layer_'+layerId2).LoadClip(columnIdLookup2,clip1ID)
+		
+		op.MIXER.SwapActiveMatrixVal([op('layer_'+layerId1).par.Order, columnIdLookup1], [op('layer_'+layerId2).par.Order, columnIdLookup2])
 		
 		op.UTILS.SetStatus('info', 'swapping clip ' + clip1ID + 'and ' + clip2ID)
 		
@@ -184,6 +210,8 @@ class Layers:
 			clipID = layerCOMP.FindClipIDByColumn(column)
 		except:
 			return ''
+			
+		return clipID
 		
 	def CheckAllLayersForMissingClips(self):
 		layers = p.findChildren(type=COMP, name="layer_*")
