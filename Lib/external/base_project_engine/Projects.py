@@ -23,6 +23,9 @@ class Projects:
 	# deletes all non-template objects from the project. 
 	# It basically sets everything back to a clean new project.
 	def ClearWorkspace(self):
+		
+		pp.Currentproject = ''
+		
 		opPaths = [
 		op.COMMS,
 		op.CLIPS,
@@ -43,6 +46,11 @@ class Projects:
 	
 	# loads a project by name into the workspace
 	def LoadProject(self, name):
+		
+		# clear the workspace
+		p.ClearWorkspace()
+		pp.Currentproject = name
+		
 		# first we get a list of comps with the MARRAENGINE tag
 		# These are components with a template object that can be instanced
 		engines = op.MARRA.findChildren(tags=["MARRAENGINE"])
