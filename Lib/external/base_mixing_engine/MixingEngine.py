@@ -12,6 +12,9 @@ class MixingEngine:
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
 		
+	
+	# called when you drop something from the Asset Browser onto the Grid Laucher
+	# It uses the layer ID and column ID to determine where you dropped.
 	def LoadClip(self, layerId, column, filePath=None):
 		
 		if filePath:
@@ -21,27 +24,34 @@ class MixingEngine:
 				toxPath = droppedOP.par.Filename.eval()
 				clipId = op.CLIPS.Create("tox", layerId, filePath=toxPath)
 				op.LAYERS.SetLayerClip(layerId, column, clipId)
+				
+			if droppedOP.parent(2).name == "container_movies":
+				moviePath = droppedOP.par.Filename.eval()
+				clipId = op.CLIPS.Create("movie", layerId, filePath=moviePath)
+				op.LAYERS.SetLayerClip(layerId, column, clipId)
 		else:
 			clipId = op.CLIPS.Create("tox", layerId)
 			op.LAYERS.SetLayerClip(layerId, column, clipId)
 			
 		return
 		
+	# matrix helper functions for dealing with the grid launcher
+	
+	# stop playing all clips
 	def ZeroOutActiveMatrix(self):
 		for r in range(0, activeMatrix.numRows):
 			for c in range(0, activeMatrix.numCols):
 				activeMatrix[r,c] = 0
 		return
 		
+	# stop playing a layer of clips
 	def ZeroOutActiveMatrixRow(self, row):
 		for c in range(0, activeMatrix.numCols):
 			activeMatrix[row,c] = 0
 		return
-		
-	def SwapActiveMatrixVal(self, val1, val2): # provide a [row, col] array for val1 and val2
 	
-		print('val1: ' + str(val1[0]) + " " + str(val1[1]))
-		print('val2: ' + str(val2[0]) + " " + str(val2[1]))
+	# swap two clips
+	def SwapActiveMatrixVal(self, val1, val2): # provide a [row, col] array for val1 and val2
 		aVal1 = 0
 		aVal2 = 0
 		
@@ -53,6 +63,7 @@ class MixingEngine:
 		
 		return
 		
+	# trigger a single clip in a column and stop all other columns clips
 	def SetActiveMatrixForLayer(self, layerID, column):
 		layersList = op.LAYERS.GetInfoTable()
 		
@@ -62,6 +73,7 @@ class MixingEngine:
 				activeMatrix[r-1,column] = 1
 		return
 	
+	# Trigger an entire column of clips by ID
 	def TriggerColumn(self, column):
 		colName = colNames[0,column]
 		layerList = op.LAYERS.GetInfoTable()
@@ -82,6 +94,8 @@ class MixingEngine:
 	def GetActiveMatrix(self):
 		return activeMatrix
 		
+		
+	# Called when you change the number of columns in the project.
 	def PopulateColumnNames(self):
 		op.UTILS.SetStatus('info', 'changed number of columns to '+ str(colNames.numCols))
 		for r in range(0, colNames.numCols):

@@ -17,7 +17,10 @@ class Utilities:
 		self.ownerComp = ownerComp
 
 	def SetStatus(self, type, status):
-		op(pp.Statuswidget).par.Value = status
+		try:
+			op(pp.Statuswidget).par.Value = status
+		except:
+			pass
 		ct = datetime.datetime.now()
 		op('fifo1').appendRow([ct, type, status])
 		return

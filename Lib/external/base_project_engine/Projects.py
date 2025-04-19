@@ -5,11 +5,12 @@ import os
 p = parent()
 pp = p.par
 
-projectsDir = 'Projects/'
+projectsDir = pp.Projectsdirectory
 
 class Projects:
 
 	# This class manages all project related logic
+	# Projects are loaded and saved into the projectsDir folder which is set by the custom parameter Projectsdirectory
 
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
@@ -26,6 +27,8 @@ class Projects:
 		
 		pp.Currentproject = ''
 		
+		# If you create a new engine functionality you can add it into the paths here
+		# It needs a DeleteAll() function in it's extension to clear back to default
 		opPaths = [
 		op.COMMS,
 		op.CLIPS,
@@ -61,7 +64,7 @@ class Projects:
 				pass
 		return
 
-	# a helper function for making  single folder
+	# a helper function for making a single folder
 	def MakeFolder(self, path, projectSuccess=True, projectIssue=""):
 		try:
 			# directory created

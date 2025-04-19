@@ -28,6 +28,8 @@ class Layer:
 		else:
 			pp.Clipb = clipID
 		
+		op.CLIPS.Trigger(clipID)
+		
 		pp.Currentblend = 1-pp.Currentblend
 		
 		# update active matrix

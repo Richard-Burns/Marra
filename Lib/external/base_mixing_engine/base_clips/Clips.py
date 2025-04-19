@@ -42,9 +42,13 @@ class Clips:
 		newClip.par.Name = toxName
 		newClip.par.Id = clipID
 		newClip.par.Compositionid = op.LAYERS.op('layer_'+layerID).par.Compositionid
+		newClip.par.Type = type
 		newClip.tags.add('projectObject')
-		externalPath = op.PROJECT.ProjectDir() + toxDir + newClip.name + ".tox"
-		newClip.par.externaltox = externalPath
+
+		# if it's a tox we'll set the external filepath to that tox so we can modify it
+		if type == "tox":
+			externalPath = op.PROJECT.ProjectDir() + toxDir + newClip.name + ".tox"
+			newClip.par.externaltox = externalPath
 			
 		# now we create our external tox inside our new clip
 		# check if touchengine is enabled
@@ -61,6 +65,12 @@ class Clips:
 			newCOMP.par.enableexternaltoxpulse.pulse()
 			newClip.ConnectSettings()
 			op.UTILS.SetStatus('info', 'created new standard COMP:'+ newClip.par.Name)
+
+
+		# if we created a movie we need to set the file and initialize that moviefilein
+		if type == "movie":
+			newCOMP.par.File = filePath
+			newCOMP.par.Reload.pulse()
 			
 		
 		op.UTILS.LayoutCOMPs(p, "clip", 200)
@@ -98,4 +108,9 @@ class Clips:
 	def OpenClipNetwork(self, clipID):
 		p = ui.panes.createFloating(type=PaneType.NETWORKEDITOR, monitorSpanWidth=0.8, monitorSpanHeight=0.8)
 		p.owner = op.CLIPS.op('clip_'+clipID).op('base_tox')
+		return
+		
+	def Trigger(self, clipID):
+		if clipID != '':
+			op('clip_'+clipID).Trigger()
 		return

@@ -13,3 +13,9 @@ class ClipTemplate:
 		except:
 			debug("couldnt connect settings to TOX, does your TOX have a DAT input for settings?")
 		return
+
+	def Trigger(self):
+		try:
+			op('base_tox').par.Initialize.pulse()
+		except:
+			pass

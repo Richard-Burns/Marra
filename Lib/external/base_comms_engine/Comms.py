@@ -3,8 +3,8 @@ import TDFunctions as TDF
 p = parent()
 pp = p.par
 
-mappingsetTemplate = op('base_template')
-toxDir = "comms/"
+mappingsetTemplate = op('base_template') # the template object for a mapping
+toxDir = "comms/" # where the mapping is stored in the project folder
 
 class Comms:
 
@@ -14,7 +14,6 @@ class Comms:
 
 	def Create(self):
 		mapID = op.UTILS.CreateID()
-		numMappingSets = parent().GetInfoTable().numRows-1
 		createdTime = op.UTILS.Timestamp()
 
 		newMappingSet = p.copy(mappingsetTemplate)
