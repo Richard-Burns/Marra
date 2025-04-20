@@ -64,7 +64,10 @@ class Compositions:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
+				print(toxFolder + nTox)
 			except:
 				pass
 				
@@ -72,6 +75,8 @@ class Compositions:
 		return
 		
 	def Delete(self, compid):
+		compOP = op('composition_'+compid)
+		op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
 		op('composition_'+compid).destroy()
 		op.UTILS.RemoveDependentCOMPFromParameters(compid, op.LAYERS, "Compositionid")
 		op.UTILS.SetStatus("info","Deleted composition: " + compid)

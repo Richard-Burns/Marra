@@ -31,6 +31,14 @@ class Layers:
 	def GetIDMatrix(self):
 		return op('null_id_matrix')
 		
+	def PlayClipByLayerAndColumnID(self, layerID, columnID):
+		op('layer_'+layerID).PlayLayerClipByColumnID(columnID)
+		return
+	
+	def StopClipByLayerAndColumnID(self, layerID, columnID):
+		op('layer_'+layerID).PlayLayer('')
+		return
+		
 	def CheckLayerOrder(self):
 		
 		orderedLayerList = p.GetOrderedLayersList()
@@ -42,6 +50,8 @@ class Layers:
 			layer.nodeX = 200 * orderNum
 			
 			orderNum = orderNum+1
+
+		op.MIXER.UpdateActiveMatrix()
 		return
 		
 	def FindLayerByOrder(self, order):
@@ -149,11 +159,14 @@ class Layers:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
 		op.UTILS.LayoutCOMPs(p, "layer", 200)
+		op.MIXER.UpdateActiveMatrix()
 		return
 		
 	def Delete(self, layerID):
@@ -164,14 +177,18 @@ class Layers:
 		
 		for c in clips:
 			op.CLIPS.Delete(c)
+
+		op.UTILS.DeleteExternalTox(layer.par.externaltox.eval())
 		
 		layer.destroy()
 		op.UTILS.SetStatus('info', 'deleted layer: '+ layerID)
 		op.UTILS.LayoutCOMPs(p, "layer", 200)
+		p.CheckLayerOrder()
 		return
 	
 	def DeleteAll(self):
 		op.UTILS.DeleteAllCOMPs(p, "layer")
+		op.MIXER.UpdateActiveMatrix()
 		return
 		
 	def SetLayerClip(self, layerID, column, clipID):
@@ -190,18 +207,22 @@ class Layers:
 		op('layer_'+layerId1).LoadClip(columnIdLookup1,clip2ID)
 		op('layer_'+layerId2).LoadClip(columnIdLookup2,clip1ID)
 		
-		op.MIXER.SwapActiveMatrixVal([op('layer_'+layerId1).par.Order, columnIdLookup1], [op('layer_'+layerId2).par.Order, columnIdLookup2])
+		op.MIXER.SwapActiveMatrixVal(op('layer_'+layerId1).par.Order+1, columnId1, op('layer_'+layerId2).par.Order+1, columnId2)
 		
 		op.UTILS.SetStatus('info', 'swapping clip ' + clip1ID + 'and ' + clip2ID)
-		
+		p.CheckLayerOrder()
 		return
 		
 	def StopAllLayers(self):
 		opsToStop = p.findChildren(name="layer_*", type=COMP)
 		for stopOp in opsToStop:
-			stopOp.TriggerLayer('')
+			stopOp.PlayLayer('')
 		
 		op.UTILS.SetStatus('info', 'stopped all layers in the project')
+		return
+	
+	def StopLayer(self, layerID):
+		op('layer_'+layerID).PlayLayer('')
 		return
 		
 	def GetClipIDByLayerIDAndColumnIndex(self, layerID, column):

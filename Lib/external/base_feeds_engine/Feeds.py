@@ -56,7 +56,9 @@ class Feeds:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
@@ -64,7 +66,9 @@ class Feeds:
 		return
 		
 	def Delete(self, feedID):
-		op('feed_'+feedID).destroy()
+		compOP = op('feed_'+feedID)
+		op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
+		compOP.destroy()
 		op.UTILS.SetStatus("info","Deleted Feed: " + feedID)
 		op.UTILS.LayoutCOMPs(p, "feed", 200)
 		return

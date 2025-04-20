@@ -38,7 +38,9 @@ class WarpaMappings:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
@@ -46,7 +48,9 @@ class WarpaMappings:
 		return
 		
 	def Delete(self, mappingid):
-		op('mapping_'+mappingid).destroy()
+		compOP = op('mapping_'+mappingid)
+		op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
+		compOP.destroy()
 		op.UTILS.SetStatus("info","Deleted mapping: " + mappingid)
 		op.UTILS.LayoutCOMPs(p, "mapping", 200)
 		return

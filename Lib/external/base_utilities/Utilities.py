@@ -4,6 +4,7 @@ import datetime
 import uuid
 import time
 from pathlib import Path
+import os
 from os import listdir
 from os.path import isfile, join
 
@@ -64,6 +65,15 @@ class Utilities:
 		for c in checkCOMPs:
 			if c.par[parameterName] == currentCOMPID:
 				checkCOMPs.Delete(c.par.Id)
+		return
+		
+	
+	# used to delete projext tox files when a comp is deleted.
+	def DeleteExternalTox(self, path):
+		try:
+			os.remove(path)
+		except:
+			p.SetStatus("warn","Couldn't delete: " + path + " Perhaps the project wasn't saved before deletion")
 		return
 		
 	def Timecode(self):

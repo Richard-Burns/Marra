@@ -18,7 +18,7 @@ class Projects:
 	
 	# returns the current project directory root
 	def ProjectDir(self):
-		fullPath = projectsDir + pp.Currentproject +"/"
+		fullPath = projectsDir + "/" + pp.Currentproject + "/"
 		return fullPath
 	
 	# deletes all non-template objects from the project. 
@@ -93,7 +93,7 @@ class Projects:
 
 	def Create(self, projectName):
 		
-		projectDir = projectsDir + projectName
+		projectDir = projectsDir + "/" + projectName
 		# Check whether the project exists or not
 		returnInfo = p.MakeFolder(projectDir)
 
@@ -133,5 +133,6 @@ class Projects:
 		projectCOMPS = op.MARRA.findChildren(type=COMP, tags=['projectObject'])
 		
 		for c in projectCOMPS:
+			print(c)
 			c.saveExternalTox(recurse=False)
 		return

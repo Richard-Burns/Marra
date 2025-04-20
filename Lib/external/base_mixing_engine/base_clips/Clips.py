@@ -30,8 +30,6 @@ class Clips:
 			
 			if type == "movie":
 				toxToLoad = pp.Movieplayer
-			if type == "notch":
-				toxToLoad = pp.Notchplayer
 		else:
 			toxToLoad = pp.Template
 			
@@ -45,10 +43,14 @@ class Clips:
 		newClip.par.Type = type
 		newClip.tags.add('projectObject')
 
-		# if it's a tox we'll set the external filepath to that tox so we can modify it
-		if type == "tox":
-			externalPath = op.PROJECT.ProjectDir() + toxDir + newClip.name + ".tox"
-			newClip.par.externaltox = externalPath
+		# when creating an empty clip we give it a generic name
+		if not filePath:
+			numClips = op('opfind_clips').numRows-1
+			newClip.par.Name = "Clip "+str(numClips)
+			
+
+		externalPath = op.PROJECT.ProjectDir() + toxDir + newClip.name + ".tox"
+		newClip.par.externaltox = externalPath
 			
 		# now we create our external tox inside our new clip
 		# check if touchengine is enabled
@@ -63,6 +65,7 @@ class Clips:
 			newCOMP = newClip.create(baseCOMP, "base_tox")
 			newCOMP.par.externaltox = toxToLoad
 			newCOMP.par.enableexternaltoxpulse.pulse()
+
 			newClip.ConnectSettings()
 			op.UTILS.SetStatus('info', 'created new standard COMP:'+ newClip.par.Name)
 
@@ -71,6 +74,14 @@ class Clips:
 		if type == "movie":
 			newCOMP.par.File = filePath
 			newCOMP.par.Reload.pulse()
+			newCOMP.par.externaltox = ''
+			newCOMP.par.enableexternaltox = False
+
+		# if we created an empty new tox we need to change it from template to a new internal path
+		if not filePath:
+			newClipExternalPath = pp.Toxfolder + "/Generated/" + newClip.par.Name + ".tox"
+			newCOMP.tags.add('projectObject')
+			newCOMP.par.externaltox = newClipExternalPath
 			
 		
 		op.UTILS.LayoutCOMPs(p, "clip", 200)
@@ -84,7 +95,9 @@ class Clips:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
@@ -93,7 +106,9 @@ class Clips:
 		
 	def Delete(self, clipid):
 		try:
-			op('clip_'+clipid).destroy()
+			compOP = op('clip_'+clipid)
+			op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
+			compOP.destroy()
 			op.UTILS.SetStatus('info', 'deleted Clip: ' +clipid)
 		except:
 			op.UTILS.SetStatus('warn', "couldn't delete "+ clipid+ " - it probably doesn't exist")

@@ -17,14 +17,6 @@ class GridLauncher:
 		op.PARAMETERS.SetParameterObject("layer", layerID)
 		return
 		
-	def TriggerClipByColumn(self, layer, column):
-		layerParent = op('container_layers/container_grid_columns/container_layer_crop')
-		layerOP = layerParent.op('container_layer'+str(layer))
-
-		#trigger the mixing engine
-		layerID = layerParent.op('select_layers')[layer,'Id']
-		op.LAYERS.op('layer_'+layerID).TriggerLayerClipByColumn(column)
-		return
 		
 	def SelectObject(self, layer, column):
 		pp.Selectedlayer = layer
@@ -39,7 +31,7 @@ class GridLauncher:
 		# this function is called from ./container_layers/container_grid_columns/container_layer_crop
 		# theres a mouse chop in there with some slope logic that executes this function
 		curScroll = pp.Columnscroll
-		colNumber = op.SCENES.par.Columnnumber
+		colNumber = op.MIXER.par.Columnnumber
 		
 		if direction == "left" and curScroll > 0:
 			pp.Columnscroll = curScroll-1

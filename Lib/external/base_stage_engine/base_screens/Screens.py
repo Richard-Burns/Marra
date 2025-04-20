@@ -37,7 +37,9 @@ class Screens:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
@@ -45,7 +47,9 @@ class Screens:
 		return
 		
 	def Delete(self, screenid):
-		op('screen_'+screenid).destroy()
+		compOP = op('screen_'+screenid)
+		op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
+		compOP.destroy()
 		op.UTILS.SetStatus("info","Deleted Screen: " + screenid)
 		op.UTILS.LayoutCOMPs(p, "screen", 200)
 		return

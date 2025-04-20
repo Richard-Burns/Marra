@@ -22,7 +22,7 @@ class Layer:
 				retCol = c
 		return retCol
 
-	def TriggerLayer(self, clipID):
+	def PlayLayer(self, clipID):
 		if pp.Currentblend:
 			pp.Clipa = clipID
 		else:
@@ -31,15 +31,11 @@ class Layer:
 		op.CLIPS.Trigger(clipID)
 		
 		pp.Currentblend = 1-pp.Currentblend
-		
-		# update active matrix
-		clipCol = self.GetColumnByClipID(clipID)
-		op.MIXER.SetActiveMatrixForLayer(parent().par.Id, clipCol) 
 		return
 	
-	def TriggerLayerClipByColumn(self, column):
+	def PlayLayerClipByColumnID(self, column):
 		clipID = p.FindClipIDByColumn(column-1)
-		p.TriggerLayer(clipID)
+		p.PlayLayer(clipID)
 		return
 
 	def LoadClip(self, column, id):

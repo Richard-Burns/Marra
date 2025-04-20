@@ -37,7 +37,9 @@ class Props:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
@@ -45,7 +47,9 @@ class Props:
 		return
 		
 	def Delete(self, propid):
-		op('prop_'+propid).destroy()
+		compOP = op('prop_'+propid)
+		op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
+		compOP.destroy()
 		op.UTILS.SetStatus("info","Deleted Prop: " + propid)
 		op.UTILS.LayoutCOMPs(p, "prop", 200)
 		return

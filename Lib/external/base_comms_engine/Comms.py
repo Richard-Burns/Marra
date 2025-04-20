@@ -36,7 +36,9 @@ class Comms:
 		
 		for nTox in toxes:
 			try:
-				p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxFolder + nTox)
+				newTox.par.enableexternaltox = True
+				newTox.par.externaltox = toxFolder + nTox
 			except:
 				pass
 				
@@ -49,7 +51,9 @@ class Comms:
 	
 	def Delete(self, mappingsetid):
 		if not op('mappingset_'+mappingsetid).par.Locked:
-			op('mappingset_'+mappingsetid).destroy()
+			compOP = op('mappingset_'+mappingsetid)
+			op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
+			compOP.destroy()
 			op.UTILS.SetStatus("info","Deleted Mapping Set: " + mappingsetid)
 			op.UTILS.LayoutCOMPs(p, "mappingset", 200)
 		return

@@ -1,7 +1,6 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
 activeMatrix = op('table_active_matrix')
-colNames = op('table_column_names')
 
 p = parent()
 pp = p.par
@@ -11,7 +10,6 @@ class MixingEngine:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
-		
 	
 	# called when you drop something from the Asset Browser onto the Grid Laucher
 	# It uses the layer ID and column ID to determine where you dropped.
@@ -36,69 +34,80 @@ class MixingEngine:
 		return
 		
 	# matrix helper functions for dealing with the grid launcher
+	# we set the matrix table to 1 or 0 to indicate playing or not
+	# a DAT execute picks up on the table changes and then does the triggering
+	# this means that the active table matrix and the ID matrix are the single sources of truth
+	
+	# Get the active matrix OP
+	def GetActiveMatrix(self):
+		return activeMatrix
+	
+	# update the layer IDs and column IDs in the active matrix
+	def UpdateActiveMatrix(self):
+		# set the size of the matrix table first
+		layerList = op.LAYERS.op('null_get_params')
+		activeMatrix.par.rows = layerList.numRows
+		activeMatrix.par.cols = op.MIXER.par.Columnnumber+1
+		
+		# set the first column to be ids
+		for r in range(0, activeMatrix.numRows):
+			activeMatrix[r,0] = layerList[r,'Id']
+			
+		# set the first row to be column numbers
+		for c in range(1, op.MIXER.par.Columnnumber+1):
+			activeMatrix[0,c] = c
+		return
 	
 	# stop playing all clips
-	def ZeroOutActiveMatrix(self):
-		for r in range(0, activeMatrix.numRows):
-			for c in range(0, activeMatrix.numCols):
+	def StopAllClips(self):
+		for r in range(1, activeMatrix.numRows):
+			for c in range(1, activeMatrix.numCols):
 				activeMatrix[r,c] = 0
 		return
 		
-	# stop playing a layer of clips
-	def ZeroOutActiveMatrixRow(self, row):
-		for c in range(0, activeMatrix.numCols):
-			activeMatrix[row,c] = 0
+	# stop only a single layer from playing, this is useful for switching to a new clip in a layer
+	def StopLayer(self, layerID):
+		for c in range(1, activeMatrix.numCols):
+			activeMatrix[layerID,c] = 0
 		return
 	
-	# swap two clips
-	def SwapActiveMatrixVal(self, val1, val2): # provide a [row, col] array for val1 and val2
-		aVal1 = 0
-		aVal2 = 0
-		
-		aVal1 = activeMatrix[val1[0], val1[1]].val
-		aVal2 = activeMatrix[val2[0], val2[1]].val
-			
-		activeMatrix[val1[0],val1[1]] = aVal2
-		activeMatrix[val2[0],val2[1]] = aVal1
-		
+	# trigger a clip on a specific layer
+	def PlayClipByLayerAndColumnID(self, layerID, columnID):
+		print('ran it here')
+		p.StopLayer(layerID)
+		activeMatrix[layerID, columnID] = 1
 		return
-		
-	# trigger a single clip in a column and stop all other columns clips
-	def SetActiveMatrixForLayer(self, layerID, column):
-		layersList = op.LAYERS.GetInfoTable()
-		
-		for r in range(0, layersList.numRows):
-			if layersList[r,'Id'] == layerID:
-				self.ZeroOutActiveMatrixRow(r-1)
-				activeMatrix[r-1,column] = 1
-		return
-	
-	# Trigger an entire column of clips by ID
-	def TriggerColumn(self, column):
-		colName = colNames[0,column]
-		layerList = op.LAYERS.GetInfoTable()
-		op.UTILS.SetStatus('info', 'triggering column: ' + colName)
 
-		for r in range(1, layerList.numRows):
-			op.LAYERS.op('layer_'+layerList[r,'Id']).TriggerLayerClipByColumn(column)
-			
-		# update the active matrix
+	# trigger all clips in a specific column
+	def PlayColumn(self, columnID):
+		p.StopAllClips()
 		
-		self.ZeroOutActiveMatrix()
-		for r in range(0, activeMatrix.numRows):
-			activeMatrix[r,column-1] = 1
-		
-		
+		for r in range(1, activeMatrix.numRows):
+			layer = op.LAYERS.FindLayerByOrder(r-1)
+			clipID = layer.FindClipIDByColumn(columnID-1)
+			if clipID != "":
+				activeMatrix[r,columnID] = 1
 		return
 	
-	def GetActiveMatrix(self):
-		return activeMatrix
+	def CheckLayerForPlayingClips(self, activeRow):
+		checkRow = activeMatrix.row(activeRow)
+		foundPlayingClip = False
+
+		for c in checkRow:
+			if c.col > 0 and c > 0:
+				foundPlayingClip = True
 		
+		return foundPlayingClip
+	
+	def SwapActiveMatrixVal(self, row1, col1, row2, col2):
+		val1 = 0
+		val2 = 0
+
+		val1 = activeMatrix[row1,col1].val
+		val2 = activeMatrix[row2,col2].val
+
+		activeMatrix[row1, col1] = val2
+		activeMatrix[row2, col2] = val1
 		
-	# Called when you change the number of columns in the project.
-	def PopulateColumnNames(self):
-		op.UTILS.SetStatus('info', 'changed number of columns to '+ str(colNames.numCols))
-		for r in range(0, colNames.numCols):
-			if colNames[0,r] == "":
-				colNames[0,r] = "column " + str(r)
 		return
+		
