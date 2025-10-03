@@ -109,13 +109,13 @@ class Layers:
 			
 		else:
 			compID = op.OUTPUTVIEWERS.par.Selectedid
-			if compID == "":
+
+			if compID == "" or compID == "none":
 				compID = op.COMPOSITIONS.GetFirstCompositionID()
 			
-			if compID == "none":
-				op.MODALS.ShowByID(3)
-				op.UTILS.SetStatus('error', "couldn't create new layer. Cant access selected Composition ID")
-				return
+			#if compID == "none":
+				#op.MODALS.ShowByID(3)
+				#op.UTILS.SetStatus('error', "couldn't create new layer. Cant access selected Composition ID")
 		
 		# generate id for layer
 		layerID = op.UTILS.CreateID()

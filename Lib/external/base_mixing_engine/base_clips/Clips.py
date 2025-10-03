@@ -133,3 +133,8 @@ class Clips:
 		if clipID != '':
 			op('clip_'+clipID).Trigger()
 		return
+
+	def SaveToLibrary(self, clipID):
+		path = ui.chooseFile(start=pp.Toxfolder,load=False,fileTypes=['tox'],title='Save tox as:')
+		if (path):
+			op('clip_'+clipID).op('base_tox').save(path)
