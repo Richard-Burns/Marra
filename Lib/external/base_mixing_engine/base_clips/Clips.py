@@ -7,7 +7,7 @@ pp = parent().par
 engineEnabled = pp.Touchenginemode
 toxFolder = pp.Toxfolder
 clipTemplate = op('base_template')
-toxDir = "mixing/clips/"
+toxDir = op.PROJECT.ProjectDir()+"lib/mixing/clips/"
 
 class Clips:
 	"""
@@ -49,8 +49,12 @@ class Clips:
 			newClip.par.Name = "Clip "+str(numClips)
 			
 
-		externalPath = op.PROJECT.ProjectDir() + toxDir + newClip.name + ".tox"
+		externalPath = toxDir + newClip.name + ".tox"
 		newClip.par.externaltox = externalPath
+
+		# we need to delete the placeholder ops from template before we go creating our new ones
+		newClip.op('base_tox').destroy()
+		newClip.op('base_template_tox').destroy()
 			
 		# now we create our external tox inside our new clip
 		# check if touchengine is enabled
@@ -79,7 +83,7 @@ class Clips:
 
 		# if we created an empty new tox we need to change it from template to a new internal path
 		if not filePath:
-			newClipExternalPath = pp.Toxfolder + "/Generated/" + newClip.par.Name + ".tox"
+			newClipExternalPath = pp.Toxfolder + "/generated/" + newClip.par.Id + ".tox"
 			newCOMP.tags.add('projectObject')
 			newCOMP.par.externaltox = newClipExternalPath
 			
@@ -90,14 +94,13 @@ class Clips:
 		
 	def LoadFromProject(self, projectName):
 		p.DeleteAll()
-		toxFolder = op.PROJECT.ProjectDir() + toxDir
-		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		toxes = op.UTILS.GetFilesFromFolder(toxDir)
 		
 		for nTox in toxes:
 			try:
-				newTox = p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxDir + nTox)
 				newTox.par.enableexternaltox = True
-				newTox.par.externaltox = toxFolder + nTox
+				newTox.par.externaltox = toxDir + nTox
 			except:
 				pass
 				
@@ -107,6 +110,7 @@ class Clips:
 	def Delete(self, clipid):
 		try:
 			compOP = op('clip_'+clipid)
+			op.UTILS.DeleteExternalTox(compOP.op('base_tox').par.externaltox.eval())
 			op.UTILS.DeleteExternalTox(compOP.par.externaltox.eval())
 			compOP.destroy()
 			op.UTILS.SetStatus('info', 'deleted Clip: ' +clipid)

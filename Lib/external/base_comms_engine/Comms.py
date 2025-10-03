@@ -4,7 +4,7 @@ p = parent()
 pp = p.par
 
 mappingsetTemplate = op('base_template') # the template object for a mapping
-toxDir = "comms/" # where the mapping is stored in the project folder
+toxDir = op.PROJECT.ProjectDir()+"lib/comms/" # where the mapping is stored in the project folder
 
 class Comms:
 
@@ -22,7 +22,7 @@ class Comms:
 		newMappingSet.par.Id = mapID
 		newMappingSet.par.Created = createdTime
 		newMappingSet.tags.add('projectObject')
-		externalPath = op.PROJECT.ProjectDir() + toxDir + newMappingSet.name + ".tox"
+		externalPath = toxDir + newMappingSet.name + ".tox"
 		newMappingSet.par.externaltox = externalPath
 
 		op.UTILS.LayoutCOMPs(p, "mappingset", 200)
@@ -31,14 +31,13 @@ class Comms:
 		
 	def LoadFromProject(self, projectName):
 		p.DeleteAll()
-		toxFolder = op.PROJECT.ProjectDir() + toxDir
-		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		toxes = op.UTILS.GetFilesFromFolder(toxDir)
 		
 		for nTox in toxes:
 			try:
-				newTox = p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxDir + nTox)
 				newTox.par.enableexternaltox = True
-				newTox.par.externaltox = toxFolder + nTox
+				newTox.par.externaltox = toxDir + nTox
 			except:
 				pass
 				

@@ -23,6 +23,10 @@ class Utilities:
 		except:
 			pass
 		ct = datetime.datetime.now()
+		
+		if pp.Debugmode:
+			debug(status)
+			
 		op('fifo1').appendRow([ct, type, status])
 		return
 	

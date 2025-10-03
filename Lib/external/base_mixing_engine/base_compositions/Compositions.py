@@ -8,7 +8,7 @@ from pathlib import Path
 p = parent()
 pp = p.par
 compTemplate = op('base_template')
-toxDir = "mixing/compositions/"
+toxDir = op.PROJECT.ProjectDir()+"lib/mixing/compositions/"
 
 class Compositions:
 
@@ -59,15 +59,13 @@ class Compositions:
 		
 	def LoadFromProject(self, projectName):
 		p.DeleteAll()
-		toxFolder = op.PROJECT.ProjectDir() + toxDir
-		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		toxes = op.UTILS.GetFilesFromFolder(toxDir)
 		
 		for nTox in toxes:
 			try:
-				newTox = p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxDir + nTox)
 				newTox.par.enableexternaltox = True
-				newTox.par.externaltox = toxFolder + nTox
-				print(toxFolder + nTox)
+				newTox.par.externaltox = toxDir + nTox
 			except:
 				pass
 				

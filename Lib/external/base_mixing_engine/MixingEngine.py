@@ -73,7 +73,6 @@ class MixingEngine:
 	
 	# trigger a clip on a specific layer
 	def PlayClipByLayerAndColumnID(self, layerID, columnID):
-		print('ran it here')
 		p.StopLayer(layerID)
 		activeMatrix[layerID, columnID] = 1
 		return

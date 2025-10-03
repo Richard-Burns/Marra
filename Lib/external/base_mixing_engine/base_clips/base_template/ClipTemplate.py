@@ -1,6 +1,9 @@
 from TDStoreTools import StorageManager
 import TDFunctions as TDF
 
+p = parent()
+pp = p.par
+
 class ClipTemplate:
 
 	def __init__(self, ownerComp):

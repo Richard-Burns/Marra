@@ -91,41 +91,66 @@ class Projects:
 
 		return returnInfo
 
-	def Create(self, projectName):
+	def Create(self, projectName, load=False):
+		
+		# create begins by creating the lib folder and populating it followed by the assets folder
 		
 		projectDir = projectsDir + "/" + projectName
 		# Check whether the project exists or not
 		returnInfo = p.MakeFolder(projectDir)
+		
+		# create lib directory
+		returnInfo = p.MakeFolder(projectDir + "/lib")
+		
+		# set the path for lib so we can create our subdirectories there
+		projectLibPath = projectsDir + "/" + projectName + "/lib/"
 
 		# make first subdirectory
 		subDirs = ["comms", "feeds", "mixing", "mappings", "stage", "settings"]
-		subDirPath = projectsDir + projectName + "/"
+		subDirPath = projectLibPath
 		returnInfo = p.MakeFoldersFromArray(subDirPath, subDirs, returnInfo)
+
 		
 		# make mixing subdirectories
 		stageDirs = ["compositions", "clips", "layers"]
-		subDirPath = projectsDir + projectName + "/mixing/"
+		subDirPath = projectLibPath + "mixing/"
 		returnInfo = p.MakeFoldersFromArray(subDirPath, stageDirs, returnInfo)
 
 		# make stage subdirectories
 		stageDirs = ["cameras", "props", "screens"]
-		subDirPath = projectsDir + projectName + "/stage/"
+		subDirPath = projectLibPath + "stage/"
 		returnInfo = p.MakeFoldersFromArray(subDirPath, stageDirs, returnInfo)
 
 		# make mapping subdirectories
 		mappingDirs = ["camschnappr", "warpa"]
-		subDirPath = projectsDir + projectName + "/mappings/"
+		subDirPath = projectLibPath + "mappings/"
 		returnInfo = p.MakeFoldersFromArray(subDirPath, mappingDirs, returnInfo)
-
-		projectSuccess = returnInfo[0]
-		projectIssue = returnInfo[1]
+		
+		
+		# create assets folder
+		returnInfo = p.MakeFolder(projectDir + "/assets")
+		
+		# set the path for assets so we can create our subdirectories there
+		projectAssetsPath = projectsDir + "/" + projectName + "/assets/"
+		
+		# make asset subdirectories
+		subDirs = ["movie", "tox", "screen", "prop", "postfx", "image"]
+		subDirPath = projectAssetsPath
+		returnInfo = p.MakeFoldersFromArray(subDirPath, subDirs, returnInfo)
+		
 
 		# check if everything went well
+		projectSuccess = returnInfo[0]
+		projectIssue = returnInfo[1]
+		
 		if projectSuccess:
 			op.UTILS.SetStatus("info", "Project Created: "+ projectName)
 		else:
 			op.UTILS.SetStatus("error", "Project creation failed: " + str(projectIssue))
-
+			
+		# if we asked to use to load project callback
+		if load:
+			op.PROJECT.LoadProject(projectName)
 		return
 		
 	# saves all COMPs in a project to the projects subdirectories
@@ -133,6 +158,5 @@ class Projects:
 		projectCOMPS = op.MARRA.findChildren(type=COMP, tags=['projectObject'])
 		
 		for c in projectCOMPS:
-			print(c)
 			c.saveExternalTox(recurse=False)
 		return

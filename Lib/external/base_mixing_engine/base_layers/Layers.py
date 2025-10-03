@@ -6,7 +6,7 @@ pp = parent().par
 layerTemplate = op('base_template')
 layersList = op('null_get_params')
 numLayers = layersList.numRows-1
-toxDir = "mixing/layers/"
+toxDir = op.PROJECT.ProjectDir()+"lib/mixing/layers/"
 
 class Layers:
 
@@ -154,14 +154,13 @@ class Layers:
 		
 	def LoadFromProject(self, projectName):
 		p.DeleteAll()
-		toxFolder = op.PROJECT.ProjectDir() + toxDir
-		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		toxes = op.UTILS.GetFilesFromFolder(toxDir)
 		
 		for nTox in toxes:
 			try:
-				newTox = p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxDir + nTox)
 				newTox.par.enableexternaltox = True
-				newTox.par.externaltox = toxFolder + nTox
+				newTox.par.externaltox = toxDir + nTox
 			except:
 				pass
 				

@@ -4,7 +4,7 @@ import TDFunctions as TDF
 p = parent()
 pp = p.par
 screenTemplate = op('geo_template')
-toxDir = "stage/screens/"
+toxDir = op.PROJECT.ProjectDir()+"lib/stage/screens/"
 
 class Screens:
 
@@ -32,14 +32,13 @@ class Screens:
 		
 	def LoadFromProject(self, projectName):
 		p.DeleteAll()
-		toxFolder = op.PROJECT.ProjectDir() + toxDir
-		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		toxes = op.UTILS.GetFilesFromFolder(toxDir)
 		
 		for nTox in toxes:
 			try:
-				newTox = p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxDir + nTox)
 				newTox.par.enableexternaltox = True
-				newTox.par.externaltox = toxFolder + nTox
+				newTox.par.externaltox = toxDir + nTox
 			except:
 				pass
 				

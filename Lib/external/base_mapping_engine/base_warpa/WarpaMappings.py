@@ -4,7 +4,7 @@ import TDFunctions as TDF
 p = parent()
 pp = p.par
 mappingTemplate = op('base_template')
-toxDir = "mappings/warpa/"
+toxDir = op.PROJECT.ProjectDir()+"lib/mappings/warpa/"
 
 class WarpaMappings:
 
@@ -33,14 +33,13 @@ class WarpaMappings:
 		
 	def LoadFromProject(self, projectName):
 		p.DeleteAll()
-		toxFolder = op.PROJECT.ProjectDir() + toxDir
-		toxes = op.UTILS.GetFilesFromFolder(toxFolder)
+		toxes = op.UTILS.GetFilesFromFolder(toxDir)
 		
 		for nTox in toxes:
 			try:
-				newTox = p.loadTox(toxFolder + nTox)
+				newTox = p.loadTox(toxDir + nTox)
 				newTox.par.enableexternaltox = True
-				newTox.par.externaltox = toxFolder + nTox
+				newTox.par.externaltox = toxDir + nTox
 			except:
 				pass
 				
